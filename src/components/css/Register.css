@@ -1,0 +1,50 @@
+
+.register{
+    background-color: #06283D;
+    margin: 100px auto 100px auto;
+    display: inline-block;
+    width: 550px;
+    height: 550px;
+    border: 2px solid;
+    /* align-items: center; */
+    border-radius: 50px;
+    text-align: left;
+    padding: 25px;
+    box-shadow: 20px 20px grey;
+}
+.heading{
+    color: #fff;
+    text-align: center;
+}
+.field{
+    width:350px;
+    height: 200px;
+    margin: 20px auto;
+    
+}
+
+.input{
+    
+        font-family:  "Raleway", sans-serif;
+        border: none;
+        border-bottom: 2px solid grey;
+        display: block;
+        margin: 10px 0;
+        width: 100%;
+        text-align: left;
+        outline: none;
+        color: white;
+       
+        
+    
+        background-color:transparent; 
+    
+    
+}
+label{
+    text-align: left;
+    color: #fff;
+    background: none;
+    /* position: relative;
+    right: 150px; */
+}
