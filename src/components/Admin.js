@@ -8,36 +8,52 @@ import { useNavigate } from 'react-router-dom';
 import AdminTable from "./AdminTable";
 
 function Admin(props) {
-    
+
     // const context = useContext(userContext)
     // const { users, getAllUser } = context
 
     const [users, setUsers] = useState([])
+    const [role, setRole] = useState(null)
+    const [designation, setDesignation] = useState(null)
     const host = "http://localhost:3000"
 
     const getAllUser = async () => {
         const response = await fetch(`${host}/users/`, {
-          method: 'GET',
-          headers: { 
-            'Content-Type': "application/json",
-            'auth-token':localStorage.getItem("token"),
-          },
+            method: 'GET',
+            headers: {
+                'Content-Type': "application/json",
+                'auth-token': localStorage.getItem("token"),
+            },
         });
         const json = await response.json()
         console.log(json);
         setUsers(json)
-      }
+    }
+
+    const getFormState = async () => {
+        const response = await fetch(`${host}/users/getFormState`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': "application/json",
+                'auth-token': localStorage.getItem("token"),
+            },
+        });
+        const json = await response.json()
+        console.log(json);
+        setRole(json.role)
+        setDesignation(json.designation)
+    }
 
     const navigate = useNavigate()
     useEffect(() => {
-        if(localStorage.getItem("token")!=null){
+        if (localStorage.getItem("token") != null) {
             getAllUser()
-        }else{
+        } else {
             navigate("/login")
         }
     }, [])
 
-    const [credentials, setCredentials] = useState({ user_name: "", user_email: "", user_doj: "", user_dob: "", user_sex:"", user_designation: "", user_phone: "", user_password: "", user_role: "" })
+    const [credentials, setCredentials] = useState({ user_name: "", user_email: "", user_doj: "", user_dob: "", user_sex: "", user_designation: "", user_phone: "", user_password: "", user_role: "" })
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -45,9 +61,9 @@ function Admin(props) {
             method: 'POST',
             headers: {
                 'Content-Type': "application/json",
-                'auth-token':localStorage.getItem("token"),
+                'auth-token': localStorage.getItem("token"),
             },
-            body: JSON.stringify({ user_name: credentials.user_name, user_email: credentials.user_email,user_phone: credentials.user_phone, user_password: credentials.user_password, user_dob: credentials.user_dob, user_doj: credentials.user_doj,  user_sex: credentials.user_sex, user_designation: credentials.user_designation, user_role: credentials.user_role, adminUserId:localStorage.getItem("userId")})
+            body: JSON.stringify({ user_name: credentials.user_name, user_email: credentials.user_email, user_phone: credentials.user_phone, user_password: credentials.user_password, user_dob: credentials.user_dob, user_doj: credentials.user_doj, user_sex: credentials.user_sex, user_designation: credentials.user_designation, user_role: credentials.user_role, adminUserId: localStorage.getItem("userId") })
         });
 
         const json = await response.json()
@@ -55,7 +71,7 @@ function Admin(props) {
         if (json.success) {
             props.showAlert("Account created successfully!", "success");
             navigate("/")
-            setCredentials({ user_name: "", user_email: "", user_doj: "", user_dob: "", user_sex:"", user_designation: "", user_phone: "", user_password: "", user_role: "" })
+            setCredentials({ user_name: "", user_email: "", user_doj: "", user_dob: "", user_sex: "", user_designation: "", user_phone: "", user_password: "", user_role: "" })
             getAllUser()
         } else {
             props.showAlert("Error occurred", "danger");
@@ -74,23 +90,27 @@ function Admin(props) {
                     <div className=" col-lg-6">
                         <div className="admin-field">
                             <label htmlFor="userid">Username</label>
-                            <input type="text" className=" input " name="user_name" onChange={onChange} value={credentials.user_name} ></input>
+                            <input type="text" className=" input " name="user_name" required onChange={onChange} value={credentials.user_name} ></input>
                             <label htmlFor="name">Password</label>
-                            <input type="password" className="input" onChange={onChange} name="user_password" value={credentials.user_password}></input>
+                            <input type="password" className="input" required onChange={onChange} name="user_password" value={credentials.user_password}></input>
                             <label htmlFor="userid">Email</label>
-                            <input type="email" className=" input " onChange={onChange} name="user_email" value={credentials.user_email} ></input>
+                            <input type="email" className=" input " required onChange={onChange} name="user_email" value={credentials.user_email} ></input>
                             <label htmlFor="name">Contact No.</label>
-                            <input type="text" className=" input" onChange={onChange} name="user_phone" value={credentials.user_phone}></input>
+                            <input type="tel" className=" input" required minLength={10} onChange={onChange} name="user_phone" value={credentials.user_phone}></input>
                             <label htmlFor="exampleFormControlSelect1">Designation</label>
-                            <select className=" input" id="exampleFormControlSelect1" onChange={onChange} value={credentials.user_designation} name="user_designation">
+                            {/* <select className=" input" required id="exampleFormControlSelect1" onChange={onChange} value={credentials.user_designation} name="user_designation">
                                 <option value={""} className="input1">Select Designation</option>
                                 <option>Judge</option>
                                 <option>Prosecutor</option>
                                 <option>Main Lead</option>
                                 <option>Intern</option>
+                            </select> */}
+                            <select className=" input" required id="exampleFormControlSelect1" onChange={onChange} value={credentials.user_designation} name="user_designation">
+                                <option value={""} className="input1">Select Designation</option>
+                                <option>Judge</option>
                             </select>
                             <label htmlFor="exampleFormControlSelect1">Gender</label>
-                            <select className=" input" id="gender" name="user_sex" onChange={onChange} value={credentials.user_sex}>
+                            <select className=" input" id="gender" required name="user_sex" onChange={onChange} value={credentials.user_sex}>
                                 <option className="input1">Select Gender</option>
                                 <option>Male</option>
                                 <option>Female</option>
@@ -101,11 +121,18 @@ function Admin(props) {
                     <div className="col-lg-6">
                         <div className="admin-field">
                             <label htmlFor="dob">Date of Birth</label>
-                            <input type="date" className=" inputr " onChange={onChange} name="user_dob" value={credentials.user_dob}></input>
+                            <input type="date" required className=" inputr " onChange={onChange} name="user_dob" value={credentials.user_dob}></input>
                             <label htmlFor="dob">Date of Join</label>
-                            <input type="date" className=" inputr " onChange={onChange} name="user_doj" value={credentials.user_doj}></input>
+                            <input type="date" required className=" inputr " onChange={onChange} name="user_doj" value={credentials.user_doj}></input>
+                            {/* <label htmlFor="role">Role</label>
+                            <input type="text" required className=" inputr" onChange={onChange} name="user_role" value={credentials.user_role} ></input> */}
                             <label htmlFor="role">Role</label>
-                            <input type="text" className=" inputr" onChange={onChange} name="user_role" value={credentials.user_role} ></input>
+                            <select className=" input" required id="role" onChange={onChange} value={credentials.user_role} name="user_role">
+                                <option value={""} className="input1">Select Role</option>
+                                <option>Admin</option>
+                                <option>User</option>
+                            </select>
+
                         </div>
 
                     </div>
@@ -115,9 +142,9 @@ function Admin(props) {
 
             <div className='container my-3'>
                 <h2 className="text-primary">Current Users</h2>
-                <h3 className="text-primary">{users.length===0 && "No Users to display" }:</h3>
+                <h3 className="text-primary">{users.length === 0 && "No Users to display"}:</h3>
                 {
-                    users.map((user) => { return <AdminTable key={user.userId} user={user}/> })
+                    users.map((user) => { return <AdminTable key={user.userId} user={user} /> })
                 }
             </div>
 
