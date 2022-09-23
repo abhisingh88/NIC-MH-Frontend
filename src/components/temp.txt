@@ -1,0 +1,19 @@
+<label htmlFor="exampleFormControlSelect1">Designation</label>
+                            {/* <select className=" input" required id="exampleFormControlSelect1" onChange={onChange} value={credentials.user_designation} name="user_designation">
+                            <option value={""} className="input1">Select Designation</option>
+                            <option>Judge</option>
+                            <option>Prosecutor</option>
+                            <option>Main Lead</option>
+                            <option>Intern</option>
+                        </select> */}
+                            <select className=" input" required id="exampleFormControlSelect1" onChange={onChange} value={credentials.user_designation} name="user_designation">
+                                <option value={""} className="input1">Select Designation</option>
+                                {/* <option>Judge</option> */}
+                                {/* {designation ?
+                                    designation.map((data) => {
+                                        <option value={data.designation}>{data.designation}</option>
+                                    }) : (
+                                        <p>Loading..</p>
+                                    )} */}
+                                
+                            </select>

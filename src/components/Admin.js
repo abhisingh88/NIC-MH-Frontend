@@ -6,6 +6,8 @@ import './css/Admin.css'
 // import userContext from '../context/user/UserContext'
 import { useNavigate } from 'react-router-dom';
 import AdminTable from "./AdminTable";
+import Option from "./Option";
+
 
 function Admin(props) {
 
@@ -13,8 +15,11 @@ function Admin(props) {
     // const { users, getAllUser } = context
 
     const [users, setUsers] = useState([])
-    const [role, setRole] = useState(null)
-    const [designation, setDesignation] = useState(null)
+
+    const [role, setRole] = useState([])
+    const [designation, setDesignation] = useState([])
+
+    const [notloading, setLoading] = useState(false)
     const host = "http://localhost:3000"
 
     const getAllUser = async () => {
@@ -26,28 +31,42 @@ function Admin(props) {
             },
         });
         const json = await response.json()
-        console.log(json);
+        // console.log(json);
         setUsers(json)
     }
 
-    const getFormState = async () => {
-        const response = await fetch(`${host}/users/getFormState`, {
+    const getDesignation = async () => {
+        const response = await fetch(`${host}/users/getDesignation`, {
             method: 'GET',
             headers: {
                 'Content-Type': "application/json",
                 'auth-token': localStorage.getItem("token"),
             },
         });
-        const json = await response.json()
-        console.log(json);
-        setRole(json.role)
-        setDesignation(json.designation)
+        const data = await response.json()
+        setDesignation(data)
+    }
+    
+    const getRole = async () => {
+        const response = await fetch(`${host}/users/getRole`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': "application/json",
+                'auth-token': localStorage.getItem("token"),
+            },
+        });
+        const data = await response.json()
+        setRole(data)
     }
 
     const navigate = useNavigate()
     useEffect(() => {
         if (localStorage.getItem("token") != null) {
+            // getFormState()
+            getDesignation()
+            getRole()
             getAllUser()
+            setLoading(true)
         } else {
             navigate("/login")
         }
@@ -72,6 +91,8 @@ function Admin(props) {
             props.showAlert("Account created successfully!", "success");
             navigate("/")
             setCredentials({ user_name: "", user_email: "", user_doj: "", user_dob: "", user_sex: "", user_designation: "", user_phone: "", user_password: "", user_role: "" })
+            getDesignation()
+            getRole()
             getAllUser()
         } else {
             props.showAlert("Error occurred", "danger");
@@ -97,18 +118,26 @@ function Admin(props) {
                             <input type="email" className=" input " required onChange={onChange} name="user_email" value={credentials.user_email} ></input>
                             <label htmlFor="name">Contact No.</label>
                             <input type="tel" className=" input" required minLength={10} onChange={onChange} name="user_phone" value={credentials.user_phone}></input>
+                            <p className="text-primary">{
+                                designation.length === 0 && "Loading data.."
+                            }
+                                
+                            </p>
                             <label htmlFor="exampleFormControlSelect1">Designation</label>
-                            {/* <select className=" input" required id="exampleFormControlSelect1" onChange={onChange} value={credentials.user_designation} name="user_designation">
-                                <option value={""} className="input1">Select Designation</option>
-                                <option>Judge</option>
-                                <option>Prosecutor</option>
-                                <option>Main Lead</option>
-                                <option>Intern</option>
-                            </select> */}
                             <select className=" input" required id="exampleFormControlSelect1" onChange={onChange} value={credentials.user_designation} name="user_designation">
                                 <option value={""} className="input1">Select Designation</option>
-                                <option>Judge</option>
+                                {
+                                    designation.map((data) => {
+                                        return  <option key={data.Id} value={data.designation}>{data.designation}</option>
+                                    })
+                                }
+
                             </select>
+
+
+
+
+
                             <label htmlFor="exampleFormControlSelect1">Gender</label>
                             <select className=" input" id="gender" required name="user_sex" onChange={onChange} value={credentials.user_sex}>
                                 <option className="input1">Select Gender</option>
@@ -125,12 +154,15 @@ function Admin(props) {
                             <label htmlFor="dob">Date of Join</label>
                             <input type="date" required className=" inputr " onChange={onChange} name="user_doj" value={credentials.user_doj}></input>
                             {/* <label htmlFor="role">Role</label>
-                            <input type="text" required className=" inputr" onChange={onChange} name="user_role" value={credentials.user_role} ></input> */}
+                        <input type="text" required className=" inputr" onChange={onChange} name="user_role" value={credentials.user_role} ></input> */}
                             <label htmlFor="role">Role</label>
                             <select className=" input" required id="role" onChange={onChange} value={credentials.user_role} name="user_role">
                                 <option value={""} className="input1">Select Role</option>
-                                <option>Admin</option>
-                                <option>User</option>
+                                {
+                                    role.map((data) => {
+                                        return  <option key={data.Id} value={data.role}>{data.role}</option>
+                                    })
+                                }
                             </select>
 
                         </div>
@@ -142,14 +174,13 @@ function Admin(props) {
 
             <div className='container my-3'>
                 <h2 className="text-primary">Current Users</h2>
-                <h3 className="text-primary">{users.length === 0 && "No Users to display"}:</h3>
+                <h3 className="text-primary">{users.length === 0 && "No Users to display: "}</h3>
                 {
                     users.map((user) => { return <AdminTable key={user.userId} user={user} /> })
                 }
             </div>
 
         </div>
-
 
     );
 

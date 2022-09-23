@@ -11,7 +11,8 @@ function Login(props) {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        const response = await fetch("http://localhost:3000/user/login", {
+        try {
+            const response = await fetch("http://localhost:3000/user/login", {
             method: 'POST',
             headers: {
                 'Content-Type': "application/json",
@@ -41,6 +42,10 @@ function Login(props) {
             setCredentials({userId: "", password: ""})
             props.showAlert("Invalid credentials!","danger");
         }
+        } catch (error) {
+            
+        }
+        
     }
 
     const onChange = (e) => {
