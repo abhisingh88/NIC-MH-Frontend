@@ -99,7 +99,10 @@ function Admin(props) {
             props.showAlert(json.msg, "danger");
         }
         else if (json.isEmailPresent) {
-            props.showAlert("Sorry an email with this email already exists", "danger");
+            props.showAlert(json.error, "danger");
+        }
+        else if (json.isUserIdPresent) {
+            props.showAlert(json.error, "danger");
         }
         else {
             props.showAlert("Error occurred!! Please Try Again", "danger");
