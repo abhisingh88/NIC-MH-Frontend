@@ -14,6 +14,8 @@ import Navbar from "./components/Nav"
 import Register from './components/Register';
 import Alert from "./components/Alert";
 import About from "./components/About";
+import News from './components/News';
+import AddNews from './components/AddNews';
 
 function App() {
   const [alert, setAlert] = useState(null);
@@ -35,6 +37,8 @@ function App() {
           <Route exact path="/" element={<Admin showAlert={showAlert}/>} />
           <Route exact path="/login" element={<Login showAlert={showAlert}/>} />
           <Route exact path="/about" element={<About showAlert={showAlert}/>} />
+          <Route exact path="/news" element={<News showAlert={showAlert}/>} />
+          <Route exact path="/addnews" element={<AddNews showAlert={showAlert}/>} />
         </Routes>
       </Router>
     </div>

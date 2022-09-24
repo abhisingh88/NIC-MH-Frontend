@@ -46,7 +46,7 @@ function Admin(props) {
         const data = await response.json()
         setDesignation(data)
     }
-    
+
     const getRole = async () => {
         const response = await fetch(`${host}/users/getRole`, {
             method: 'GET',
@@ -94,8 +94,15 @@ function Admin(props) {
             getDesignation()
             getRole()
             getAllUser()
-        } else {
-            props.showAlert("Error occurred", "danger");
+        }
+        else if (json.errorStatus) {
+            props.showAlert(json.msg, "danger");
+        }
+        else if (json.isEmailPresent) {
+            props.showAlert("Sorry an email with this email already exists", "danger");
+        }
+        else {
+            props.showAlert("Error occurred!! Please Try Again", "danger");
         }
     }
 
@@ -121,22 +128,17 @@ function Admin(props) {
                             <p className="text-primary">{
                                 designation.length === 0 && "Loading data.."
                             }
-                                
                             </p>
                             <label htmlFor="exampleFormControlSelect1">Designation</label>
                             <select className=" input" required id="exampleFormControlSelect1" onChange={onChange} value={credentials.user_designation} name="user_designation">
                                 <option value={""} className="input1">Select Designation</option>
                                 {
                                     designation.map((data) => {
-                                        return  <option key={data.Id} value={data.designation}>{data.designation}</option>
+                                        return <option key={data.Id} value={data.designation}>{data.designation}</option>
                                     })
                                 }
 
                             </select>
-
-
-
-
 
                             <label htmlFor="exampleFormControlSelect1">Gender</label>
                             <select className=" input" id="gender" required name="user_sex" onChange={onChange} value={credentials.user_sex}>
@@ -155,12 +157,16 @@ function Admin(props) {
                             <input type="date" required className=" inputr " onChange={onChange} name="user_doj" value={credentials.user_doj}></input>
                             {/* <label htmlFor="role">Role</label>
                         <input type="text" required className=" inputr" onChange={onChange} name="user_role" value={credentials.user_role} ></input> */}
+                            <p className="text-primary">{
+                                role.length === 0 && "Loading data.."
+                            }
+                            </p>
                             <label htmlFor="role">Role</label>
                             <select className=" input" required id="role" onChange={onChange} value={credentials.user_role} name="user_role">
                                 <option value={""} className="input1">Select Role</option>
                                 {
                                     role.map((data) => {
-                                        return  <option key={data.Id} value={data.role}>{data.role}</option>
+                                        return <option key={data.Id} value={data.role}>{data.role}</option>
                                     })
                                 }
                             </select>
@@ -174,7 +180,7 @@ function Admin(props) {
 
             <div className='container my-3'>
                 <h2 className="text-primary">Current Users</h2>
-                <h3 className="text-primary">{users.length === 0 && "No Users to display: "}</h3>
+                <h3 className="text-primary">{users.length === 0 && "No Users to display "}</h3>
                 {
                     users.map((user) => { return <AdminTable key={user.userId} user={user} /> })
                 }

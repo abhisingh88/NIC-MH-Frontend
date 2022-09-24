@@ -25,6 +25,7 @@ function AdminTable(props) {
             <th scope="row">{user.userId}</th>
             <td>{user.username}</td>
             <td>{user.designation}</td>
+            {/* <td>{new Date(Date.parse(user.doj))}</td> */}
             <td>{user.doj}</td>
             <td>{user.role}</td>
             {/* <i className='far fa-edit mx-2'></i>

@@ -13,39 +13,40 @@ function Login(props) {
         e.preventDefault()
         try {
             const response = await fetch("http://localhost:3000/user/login", {
-            method: 'POST',
-            headers: {
-                'Content-Type': "application/json",
-            },
-            body: JSON.stringify({ userId: credentials.userId, password: credentials.password })
-        });
+                method: 'POST',
+                headers: {
+                    'Content-Type': "application/json",
+                },
+                body: JSON.stringify({ userId: credentials.userId, password: credentials.password })
+            });
 
-        const json = await response.json()
-        const userId=json.user.userId;
-        const username=json.user.username;
-        // json.user.role="user"
-        if (json.success && json.user.role=="admin") {
-            localStorage.setItem('token', json.authtoken);
-            localStorage.setItem('userId',userId)
-            localStorage.setItem('username',username)
-            navigate("/")
-            props.showAlert("Admin Logged in successfully!","success");
-        }
-        else if(json.success && json.user.role=="user"){
-            localStorage.setItem('token', json.authtoken);
-            localStorage.setItem('userId',userId)
-            localStorage.setItem('username',username)
-            navigate("/about")
-            props.showAlert("User Logged in successfully!","success");
-        } 
-        else {
-            setCredentials({userId: "", password: ""})
-            props.showAlert("Invalid credentials!","danger");
-        }
+            const json = await response.json()
+            const userId = json.user.userId;
+            const username = json.user.username;
+            // json.user.role="user"
+            if (json.success && json.user.role == "Admin") {
+                localStorage.setItem('token', json.authtoken);
+                localStorage.setItem('userId', userId)
+                localStorage.setItem('username', username)
+                navigate("/")
+                props.showAlert("Admin Logged in successfully!", "success");
+            }
+            else if (json.success && json.user.role == "User") {
+                localStorage.setItem('token', json.authtoken);
+                localStorage.setItem('userId', userId)
+                localStorage.setItem('username', username)
+                navigate("/news")
+                props.showAlert("User Logged in successfully!", "success");
+            }
+            else if(!json.success && json.user==null){
+                setCredentials({ userId: "", password: "" })
+                props.showAlert("Invalid Password!", "danger");
+            }
         } catch (error) {
-            
+            setCredentials({ userId: "", password: "" })
+            props.showAlert("Invalid credentials or some Error Ocurred Please Try Again!", "danger");
         }
-        
+
     }
 
     const onChange = (e) => {
@@ -60,9 +61,9 @@ function Login(props) {
                 <form className="" method="post" onSubmit={handleSubmit}>
 
                     <label className="label" htmlFor="username" > User ID</label>
-                    <input className="input" type="text" name="userId" value={credentials.userId} onChange={onChange} ></input><br />
+                    <input className="input" type="text" required name="userId" value={credentials.userId} onChange={onChange} ></input><br />
                     <label className="label" htmlFor="pass"> Password</label>
-                    <input className="input" type="password" name="password" value={credentials.password} onChange={onChange}></input><br />
+                    <input className="input" type="password" required name="password" value={credentials.password} onChange={onChange}></input><br />
 
                     <button type="submit" className="btn btn-success">Sign In</button>
 
